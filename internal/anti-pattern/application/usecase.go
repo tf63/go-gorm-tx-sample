@@ -18,7 +18,7 @@ func NewAccountUsecase(ar domain.AccountRepository) *AccountUsecase {
 	return &AccountUsecase{ar: ar}
 }
 
-func (a *AccountUsecase) Transfer(ctx context.Context, fromID, toID string, amount int) error {
+func (a *AccountUsecase) Transfer(ctx context.Context, fromID, toID, amount int) error {
 	// アンチパターン: ビジネスロジックがサービス層ではなくリポジトリ層に含まれている
 	return a.ar.Transfer(ctx, fromID, toID, amount)
 }

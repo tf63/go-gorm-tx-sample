@@ -23,12 +23,28 @@ func main() {
 
 	// Request
 	ctx := context.Background()
-	err = au.Transfer(ctx, "1", "2", 1000)
+
+	fromID := 2
+	toID := 3
+
+	account_1, _ := ar.FindByID(ctx, fromID)
+	account_2, _ := ar.FindByID(ctx, toID)
+
+	fmt.Printf("Account %d Balance: %d\n", fromID, account_1.Balance)
+	fmt.Printf("Account %d Balance: %d\n", toID, account_2.Balance)
+
+	err = au.Transfer(ctx, fromID, toID, 100)
 	if err != nil {
 		fmt.Println("Transfer failed:", err)
 		return
 	}
 
 	// Output
-	fmt.Println("Transfer completed successfully", "from_account_id", "to_account_id", 1000)
+	fmt.Println("Transfer completed successfully")
+
+	account_1, _ = ar.FindByID(ctx, fromID)
+	account_2, _ = ar.FindByID(ctx, toID)
+
+	fmt.Printf("Account %d Balance: %d\n", fromID, account_1.Balance)
+	fmt.Printf("Account %d Balance: %d\n", toID, account_2.Balance)
 }

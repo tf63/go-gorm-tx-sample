@@ -1,10 +1,11 @@
-CREATE DATABASE IF NOT EXISTS `sample` DEFAULT CHARACTER SET utf8mb4;
 USE `sample`;
 
-SET CHARSET utf8mb4;
+SET NAMES utf8mb4;
 
-CREATE TABLE accounts (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  balance BIGINT NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+INSERT INTO `accounts` (`id`, `balance`) VALUES
+    (1, 1000),
+    (2, 2000),
+    (3, 3000),
+    (4, 4000),
+    (5, 5000)
+;

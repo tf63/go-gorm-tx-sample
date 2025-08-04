@@ -28,7 +28,7 @@ func (r *accountRepositoryImpl) Save(ctx context.Context, account domain.Account
 	return nil
 }
 
-func (r *accountRepositoryImpl) FindByID(ctx context.Context, id string) (*domain.Account, error) {
+func (r *accountRepositoryImpl) FindByID(ctx context.Context, id int) (*domain.Account, error) {
 	// (IDで口座を検索する)
 	var account domain.Account
 	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&account).Error; err != nil {
@@ -41,8 +41,7 @@ func (r *accountRepositoryImpl) FindByID(ctx context.Context, id string) (*domai
 // アンチパターン: Repositoryにトランザクションを含める
 func (a *accountRepositoryImpl) Transfer(
 	ctx context.Context,
-	fromID, toID string,
-	amount int,
+	fromID, toID, amount int,
 ) error {
 	// トランザクションを開始
 	return a.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {

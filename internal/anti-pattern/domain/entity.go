@@ -4,7 +4,7 @@ import "errors"
 
 // 口座を表すエンティティ
 type Account struct {
-	ID      string
+	ID      int
 	Balance int
 }
 
