@@ -2,17 +2,16 @@ package infrastracture
 
 import (
 	"context"
-	"database/sql"
 
-	"github.com/tf63/go-gorm-tx-sample/internal/context-pattern/db/xcontext"
 	"github.com/tf63/go-gorm-tx-sample/internal/context-pattern/domain"
+	"gorm.io/gorm"
 )
 
 type txManager struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
-func NewTransactionManager(db *sql.DB) domain.TxManager {
+func NewTransactionManager(db *gorm.DB) domain.TxManager {
 	return &txManager{
 		db,
 	}
@@ -22,25 +21,11 @@ func (tm *txManager) DoInTx(
 	ctx context.Context,
 	fn domain.TxFunction,
 ) error {
-	tx, err := tm.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		} else {
-			err = tx.Commit()
+	return tm.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		ctxWithTx := WithTx(ctx, tx)
+		if err := fn(ctxWithTx); err != nil {
+			return err
 		}
-	}()
-
-	ctxWithTx := xcontext.WithTx(ctx, tx)
-
-	err = fn(ctxWithTx)
-	if err != nil {
-		return err
-	}
-
-	return nil
+		return nil
+	})
 }

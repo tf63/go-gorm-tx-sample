@@ -2,29 +2,25 @@ package infrastracture
 
 import (
 	"context"
-	"database/sql"
 
-	"github.com/tf63/go-gorm-tx-sample/internal/context-pattern/db"
-	"github.com/tf63/go-gorm-tx-sample/internal/context-pattern/db/xcontext"
+	"gorm.io/gorm"
 )
 
 type BaseRepository struct {
-	_db          *sql.DB
-	txContextKey any
+	_db *gorm.DB
 }
 
-func NewBaseRepository(db *sql.DB) BaseRepository {
+func NewBaseRepository(db *gorm.DB) BaseRepository {
 	return BaseRepository{
-		_db:          db,
-		txContextKey: xcontext.Key(),
+		_db: db,
 	}
 }
 
 // Repository内で呼ぶ用
-func (b *BaseRepository) DB(ctx context.Context) db.DB {
+func (b *BaseRepository) DB(ctx context.Context) *gorm.DB {
 	// ctxにトランザクションが含まれている場合はそれを使用し、そうでなければ通常のDBを返す
-	if tx, ok := xcontext.GetTx(ctx); ok {
+	if tx, ok := GetTx(ctx); ok {
 		return tx
 	}
-	return b._db
+	return b._db.WithContext(ctx)
 }
